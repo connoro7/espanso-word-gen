@@ -264,13 +264,56 @@ def main(loglevel=False):
     misspellings = list()
     for word in processed_words:
         misspellings.append(get_misspellings(word))
+    if loglevel:
+        print(f"Generated {len(misspellings)} lists of misspellings:\n{misspellings}")
 
-    flattened = list(itertools.chain.from_iterable(misspellings))
+    def remove_duplicates(list_of_misspellings: [str]) -> [str]:
+        return list(set(list_of_misspellings))
 
-    # Remove any real words found in the dictionary that ended up in the misspellings list
-    processed_word_list = remove_real_words(flattened, loglevel)
+    def remove_if_original_word(
+        list_of_misspellings: [str], original_word: str
+    ) -> [str]:
+        for word in list_of_misspellings:
+            if word == original_word:
+                list_of_misspellings.remove(word)
+        return list_of_misspellings
 
-    print(f"Generated {len(flattened)} mispellings:\n{flattened}")
+    # Remove any real words found in the dictionary that ended up getting generated
+    for list_of_misspellings in misspellings:
+        remove_duplicates(list_of_misspellings)
+        remove_real_words(list_of_misspellings)
+
+    # Map original word to misspellings
+    misspelling_dict = dict()
+    for index, word in enumerate(processed_words):
+        misspelling_dict[word] = misspellings[index]
+
+    # create yaml template
+    # matches:
+    #   - trigger: { { MISPELLED WORD } }
+    #     replace: { { CORRECT WORD } }
+    #     propagate_case: true
+    #     word: true
+    yaml_match_template = """\
+- trigger: {0}
+  replace: {1}
+  propagate_case: true
+  word: true
+    """
+
+    # generate yaml
+    for original_word, misspelling_list in misspelling_dict.items():
+        print(f"##################### Generating yaml for: {original_word}")
+        for word in misspelling_list:
+            # print(f" {original_word} <- {word}")
+            print(yaml_match_template.format(original_word, word))
+
+    # flattened = list(itertools.chain.from_iterable(misspellings))
+
+    # processed_word_list = remove_real_words(flattened, loglevel)
+    # processed_word_list = remove_real_words(flattened, loglevel)
+
+    # print(f"Generated {len(flattened)} mispellings:\n{flattened}")
 
 
 if __name__ == "__main__":
