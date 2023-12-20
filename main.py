@@ -223,16 +223,33 @@ def process_word_list(loglevel=False):
 
 def get_misspellings(word, loglevel=False):
     misspellings = list()
+    # Generate words as if you forgot to type a single character
     for index, char in enumerate(word):
         if char == "s" and index == len(word) - 1:  # skip plurals
             continue
         missing_single_char = word[:index] + word[index + 1 :]
         misspellings.append(missing_single_char)
+
+    # Generate words as if you typed adjacent characters in the wrong order
+    for index, char in enumerate(word):
+        # swap adjacent letters in either direction (to the left, to the right), and append to results
+        if index > 0:
+            # swap with previous letter
+            swapped = word[: index - 1] + char + word[index - 1] + word[index + 1 :]
+            if loglevel:
+                print(f">0: index: {index}, char: {char}, swapped: {swapped}")
+            misspellings.append(swapped)
+        if index < len(word) - 1:
+            # swap with next letter
+            swapped = word[:index] + word[index + 1] + char + word[index + 2 :]
+            if loglevel:
+                print(f"<LEN: index: {index}, char: {char}, swapped: {swapped}")
+            misspellings.append(swapped)
+    loglevel = True
     if loglevel:
         print(f"misspellings: {misspellings}")
+    loglevel = False
     return misspellings
-    # for each letter
-    # swap adjacent letters in either direction (to the left, to the right), and append to results
 
 
 def main(loglevel=False):
