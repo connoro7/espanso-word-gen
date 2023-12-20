@@ -170,20 +170,13 @@ def sort_by_length(text: str, loglevel=False) -> str:
 
 
 def remove_real_words(array_of_misspellings: [str], loglevel=False) -> [str]:
-    dictionary_words = read_from_file("english_dictionary.txt").split()
-    if loglevel:
-        print(f"BEFORE: {len(array_of_misspellings)} misspellings")
+    dictionary_words = set(read_from_file("english_dictionary.txt").split())
+    cleaned_array = []
     for word in array_of_misspellings:
-        if loglevel:
-            print(f'Checking "{word}" against dictionary')
-        if word in dictionary_words:
-            if loglevel:
-                print(f'Removing "{word}" from misspellings list')
-            array_of_misspellings.remove(word)
-    if loglevel:
-        print("non-real words remaining:", array_of_misspellings)
-        print(f"AFTER: {len(array_of_misspellings)} misspellings")
-    return array_of_misspellings
+        if word not in dictionary_words:
+            cleaned_array.append(word)
+    print(f"{len(array_of_misspellings)} -> {len(cleaned_array)}: {cleaned_array}")
+    return cleaned_array
 
 
 def process_word_list(loglevel=False):
