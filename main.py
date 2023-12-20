@@ -163,8 +163,24 @@ def sort_by_length(text: str, loglevel=False) -> str:
     words = text.split()
     sorted_ = sorted(words, key=len)
     result = " ".join(sorted_)
-    print("\nsorted by length:", result)
+    if loglevel:
+        print("\nsorted by length:", result)
     return result
+
+
+def remove_real_words(array_of_misspellings: [str], loglevel=False) -> [str]:
+    dictionary_words = read_from_file("english_dictionary.txt").split()
+    print(f"BEFORE: {len(array_of_misspellings)} misspellings")
+    for word in array_of_misspellings:
+        # print(f'Checking "{word}" against dictionary')
+
+        if word in dictionary_words:
+            print(f'Removing "{word}" from misspellings list')
+            array_of_misspellings.remove(word)
+    if loglevel:
+        print("removed real words:", array_of_misspellings)
+    print(f"AFTER: {len(array_of_misspellings)} misspellings")
+    return array_of_misspellings
 
 
 def process_word_list(loglevel=False):
@@ -183,7 +199,6 @@ def process_word_list(loglevel=False):
 
     word_file = remove_escape_chars(word_file, loglevel)
 
-    print("PRE-SHORT: ", word_file)
     word_file = remove_short_words(word_file, loglevel, threshold=MINIMUM_WORD_LENGTH)
     # word_file = remove_short_words_re(
     #     word_file, loglevel, threshold=MINIMUM_WORD_LENGTH
@@ -230,7 +245,10 @@ def main(loglevel=False):
 
     flattened = list(itertools.chain.from_iterable(misspellings))
 
-    print(flattened)
+    # Remove any real words found in the dictionary that ended up in the misspellings list
+    processed_word_list = remove_real_words(flattened, loglevel)
+
+    print(f"Generated {len(flattened)} mispellings:\n{flattened}")
 
 
 if __name__ == "__main__":
