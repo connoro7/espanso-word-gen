@@ -299,7 +299,7 @@ def main(loglevel=False):
   replace: {1}
   propagate_case: true
   word: true
-    """
+"""
 
     # generate yaml
     for original_word, misspelling_list in misspelling_dict.items():
