@@ -288,18 +288,23 @@ def main(loglevel=False):
     #     propagate_case: true
     #     word: true
     yaml_match_template = """\
-- trigger: {0}
-  replace: {1}
-  propagate_case: true
-  word: true
+  - trigger: {1}
+    replace: {0}
+    propagate_case: true
+    word: true
 """
 
     # generate yaml
+    yaml_output_file = open("generated.yaml", "w")
+    yaml_output_file.write("matches:\n")
+
     for original_word, misspelling_list in misspelling_dict.items():
-        print(f"##################### Generating yaml for: {original_word}")
+        print(f"Generating yaml for: {original_word}")
         for word in misspelling_list:
             # print(f" {original_word} <- {word}")
-            print(yaml_match_template.format(original_word, word))
+            yaml_output_file.write(yaml_match_template.format(original_word, word))
+
+    yaml_output_file.close()
 
     # flattened = list(itertools.chain.from_iterable(misspellings))
 
