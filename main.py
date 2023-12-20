@@ -155,7 +155,8 @@ def sort_by_alphabetically(text: str, loglevel=False) -> str:
     words = text.split()
     sorted_ = sorted(words)
     result = " ".join(sorted_)
-    print("\nsorted alphabetically:", result)
+    if loglevel:
+        print("\nsorted alphabetically:", result)
     return result
 
 
@@ -170,16 +171,18 @@ def sort_by_length(text: str, loglevel=False) -> str:
 
 def remove_real_words(array_of_misspellings: [str], loglevel=False) -> [str]:
     dictionary_words = read_from_file("english_dictionary.txt").split()
-    print(f"BEFORE: {len(array_of_misspellings)} misspellings")
+    if loglevel:
+        print(f"BEFORE: {len(array_of_misspellings)} misspellings")
     for word in array_of_misspellings:
-        # print(f'Checking "{word}" against dictionary')
-
+        if loglevel:
+            print(f'Checking "{word}" against dictionary')
         if word in dictionary_words:
-            print(f'Removing "{word}" from misspellings list')
+            if loglevel:
+                print(f'Removing "{word}" from misspellings list')
             array_of_misspellings.remove(word)
     if loglevel:
-        print("removed real words:", array_of_misspellings)
-    print(f"AFTER: {len(array_of_misspellings)} misspellings")
+        print("non-real words remaining:", array_of_misspellings)
+        print(f"AFTER: {len(array_of_misspellings)} misspellings")
     return array_of_misspellings
 
 
@@ -200,6 +203,7 @@ def process_word_list(loglevel=False):
     word_file = remove_escape_chars(word_file, loglevel)
 
     word_file = remove_short_words(word_file, loglevel, threshold=MINIMUM_WORD_LENGTH)
+
     # word_file = remove_short_words_re(
     #     word_file, loglevel, threshold=MINIMUM_WORD_LENGTH
     # )
@@ -245,17 +249,18 @@ def get_misspellings(word, loglevel=False):
             if loglevel:
                 print(f"<LEN: index: {index}, char: {char}, swapped: {swapped}")
             misspellings.append(swapped)
-    loglevel = True
     if loglevel:
         print(f"misspellings: {misspellings}")
-    loglevel = False
     return misspellings
 
 
 def main(loglevel=False):
+    # Get list of words we want to generate misspellings for
     processed_words = process_word_list(loglevel)
+    if loglevel:
+        print(f"Generated {len(processed_words)} processed words:\n{processed_words}")
 
-    # create misspellings
+    # Generate misspellings
     misspellings = list()
     for word in processed_words:
         misspellings.append(get_misspellings(word))
