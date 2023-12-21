@@ -3,7 +3,7 @@ import itertools
 import re
 
 INPUT_FILE = "wordlist.txt"
-MINIMUM_WORD_LENGTH = 4
+MINIMUM_WORD_LENGTH = 8
 
 
 def read_from_file(file_name, loglevel=False):
@@ -195,7 +195,9 @@ def process_word_list(loglevel=False):
 
     word_file = remove_escape_chars(word_file, loglevel)
 
-    word_file = remove_short_words(word_file, loglevel, threshold=MINIMUM_WORD_LENGTH)
+    word_file = remove_short_words(
+        word_file, loglevel, threshold=MINIMUM_WORD_LENGTH - 1
+    )
 
     # word_file = remove_short_words_re(
     #     word_file, loglevel, threshold=MINIMUM_WORD_LENGTH
@@ -267,7 +269,7 @@ def main(loglevel=False):
         list_of_misspellings: [str], original_word: str
     ) -> [str]:
         for word in list_of_misspellings:
-            if word == original_word:
+            if str(word) == str(original_word):
                 list_of_misspellings.remove(word)
         return list_of_misspellings
 
