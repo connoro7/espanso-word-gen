@@ -3,7 +3,7 @@
 Generate misspellings and word variations from any file and output as .yaml for Espanso!
 
 The goal of this application is to be able to take any local file and transform it into a dictionary of possible word misspellings.
-Instead of using the entire dictionary (thus creating tons of uneccessary word combiniations), this app will only generate mispellings of the words that you directly use, reflecting your specific vocabulary, industry terms, and writing style.
+Instead of using the entire dictionary (thus creating tons of uneccessary word combiniations), Genspanso will only generate mispellings of the words that you directly use, reflecting your specific vocabulary, industry terms, and writing style.
 
 <!-- This application is language-agnostic - English, German, Italian, French, Spanish, just to name a few! -->
 
