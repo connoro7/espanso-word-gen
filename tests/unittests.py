@@ -45,6 +45,9 @@ class TestMain(unittest.TestCase):
     def test_handles_non_word_characters(self):
         pass
 
+    def test_should_remove_duplicates(self):
+        pass
+
 
 if __name__ == "__main__":
     unittest.main()
