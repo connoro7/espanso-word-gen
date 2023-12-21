@@ -298,15 +298,17 @@ def main(loglevel=False):
     propagate_case: true
     word: true
 """
+
     yaml_output_file = open("genspanso.yaml", "w")
     yaml_output_file.write(
         "name: Genspanso\npackage_author: Connor Dillon <connor@connordillon.dev>\nparent: default\nmatches:\n"
     )
 
     for original_word, misspelling_list in misspelling_dict.items():
-        print(f"Generating yaml for: {original_word}")
+        print(f"Generating matches for: {original_word}")
         for word in misspelling_list:
-            # print(f" {original_word} <- {word}")
+            if loglevel:
+                print(f" {original_word} <- {word}")
             yaml_output_file.write(yaml_match_template.format(original_word, word))
 
     yaml_output_file.close()
