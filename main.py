@@ -286,8 +286,10 @@ def main(loglevel=False):
 """
 
     # generate yaml
-    yaml_output_file = open("generated.yaml", "w")
-    yaml_output_file.write("matches:\n")
+    yaml_output_file = open("genspanso.yaml", "w")
+    yaml_output_file.write(
+        "name: Genspanso\npackage_author: Connor Dillon <connor@connordillon.dev>\nparent: default\nmatches:\n"
+    )
 
     for original_word, misspelling_list in misspelling_dict.items():
         print(f"Generating yaml for: {original_word}")
