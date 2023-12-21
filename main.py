@@ -2,8 +2,8 @@ import sys
 import itertools
 import re
 
-INPUT_FILE = "wordlist.txt"
-MINIMUM_WORD_LENGTH = 8
+INPUT_FILE = "tests/textfile.txt"
+MINIMUM_WORD_LENGTH = 6
 
 
 def read_from_file(file_name, loglevel=False):
@@ -110,18 +110,6 @@ def remove_short_words(
     return result
 
 
-def remove_short_words_re(
-    text: str, loglevel=False, threshold=MINIMUM_WORD_LENGTH
-) -> str:
-    # Define a regular expression pattern to match words with at least 'threshold' characters
-    pattern = r"\b\w{" + str(threshold) + r",}\b"
-
-    # Use re.sub to remove words that don't meet the length criterion
-    result = re.sub(pattern, "", text)
-
-    return result
-
-
 def remove_non_words(text: str, loglevel=False) -> str:
     text = text.split()
     alpha_words = [word for word in text if word.isalpha()]
@@ -172,10 +160,15 @@ def sort_by_length(text: str, loglevel=False) -> str:
 def remove_real_words(array_of_misspellings: [str], loglevel=False) -> [str]:
     dictionary_words = set(read_from_file("english_dictionary.txt").split())
     cleaned_array = []
+    collisions = []
     for word in array_of_misspellings:
         if word not in dictionary_words:
             cleaned_array.append(word)
-    print(f"{len(array_of_misspellings)} -> {len(cleaned_array)}: {cleaned_array}")
+        else:
+            collisions.append(word)
+    if loglevel:
+        print(f"{len(array_of_misspellings)} -> {len(cleaned_array)}")
+        print(f"Collisions: {collisions}")
     return cleaned_array
 
 
@@ -199,19 +192,15 @@ def process_word_list(loglevel=False):
         word_file, loglevel, threshold=MINIMUM_WORD_LENGTH - 1
     )
 
-    # word_file = remove_short_words_re(
-    #     word_file, loglevel, threshold=MINIMUM_WORD_LENGTH
-    # )
-
     word_file = remove_non_words(word_file, loglevel)
 
     word_file = to_lowercase(word_file, loglevel)
 
     word_file = only_unique_words(word_file, loglevel)
 
-    # word_file = sort_by_alphabetically(word_file, loglevel)
+    word_file = sort_by_alphabetically(word_file, loglevel)
 
-    word_file = sort_by_length(word_file, loglevel)
+    # word_file = sort_by_length(word_file, loglevel)
 
     processed_word_list = word_file.split()
 
@@ -268,10 +257,13 @@ def main(loglevel=False):
     def remove_if_original_word(
         list_of_misspellings: [str], original_word: str
     ) -> [str]:
+        cleaned_array = []
         for word in list_of_misspellings:
-            if str(word) == str(original_word):
-                list_of_misspellings.remove(word)
-        return list_of_misspellings
+            if str(word) != str(original_word):
+                cleaned_array.append(word)
+            else:
+                print(f"Removed {word} from misspellings of {original_word}")
+        return cleaned_array
 
     # Remove any real words found in the dictionary that ended up getting generated
     for list_of_misspellings in misspellings:
@@ -283,12 +275,6 @@ def main(loglevel=False):
     for index, word in enumerate(processed_words):
         misspelling_dict[word] = misspellings[index]
 
-    # create yaml template
-    # matches:
-    #   - trigger: { { MISPELLED WORD } }
-    #     replace: { { CORRECT WORD } }
-    #     propagate_case: true
-    #     word: true
     yaml_match_template = """\
   - trigger: {1}
     replace: {0}
