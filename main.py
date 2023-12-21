@@ -3,7 +3,7 @@ import itertools
 import re
 
 INPUT_FILE = "tests/textfile.txt"
-MINIMUM_WORD_LENGTH = 6
+MINIMUM_WORD_LENGTH = 7
 
 
 def read_from_file(file_name, loglevel=False):
@@ -218,6 +218,18 @@ def get_misspellings(word, loglevel=False):
         missing_single_char = word[:index] + word[index + 1 :]
         misspellings.append(missing_single_char)
 
+    # TODO: What are the limits of implementing this? Do massive .yaml match files slow down Espanso?
+    # Generate words as if you typed an extra character
+    # for index, char in enumerate(word):
+    #     for letter in "abcdefghijklmnopqrstuvwxyz":
+    #         added_single_char = word[:index] + letter + word[index:]
+    #         misspellings.append(added_single_char)
+
+    # Generate words as if you typed a character twice
+    for index, char in enumerate(word):
+        doubled_char = word[:index] + char + char + word[index + 1 :]
+        misspellings.append(doubled_char)
+
     # Generate words as if you typed adjacent characters in the wrong order
     for index, char in enumerate(word):
         # swap adjacent letters in either direction (to the left, to the right), and append to results
@@ -255,6 +267,7 @@ def main(loglevel=False):
         deduped = set(list_of_misspellings)
         return list(deduped)
 
+    # TODO: Not needed? Leaving it in for now. Tests should validate that original word does not make it into the list of misspellings
     def remove_if_original_word(
         list_of_misspellings: [str], original_word: str
     ) -> [str]:
@@ -278,14 +291,13 @@ def main(loglevel=False):
     for index, word in enumerate(processed_words):
         misspelling_dict[word] = misspellings[index]
 
+    # generate yaml
     yaml_match_template = """\
   - trigger: {1}
     replace: {0}
     propagate_case: true
     word: true
 """
-
-    # generate yaml
     yaml_output_file = open("genspanso.yaml", "w")
     yaml_output_file.write(
         "name: Genspanso\npackage_author: Connor Dillon <connor@connordillon.dev>\nparent: default\nmatches:\n"
@@ -298,13 +310,6 @@ def main(loglevel=False):
             yaml_output_file.write(yaml_match_template.format(original_word, word))
 
     yaml_output_file.close()
-
-    # flattened = list(itertools.chain.from_iterable(misspellings))
-
-    # processed_word_list = remove_real_words(flattened, loglevel)
-    # processed_word_list = remove_real_words(flattened, loglevel)
-
-    # print(f"Generated {len(flattened)} mispellings:\n{flattened}")
 
 
 if __name__ == "__main__":
