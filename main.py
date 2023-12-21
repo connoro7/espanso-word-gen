@@ -252,7 +252,8 @@ def main(loglevel=False):
         print(f"Generated {len(misspellings)} lists of misspellings:\n{misspellings}")
 
     def remove_duplicates(list_of_misspellings: [str]) -> [str]:
-        return list(set(list_of_misspellings))
+        deduped = set(list_of_misspellings)
+        return list(deduped)
 
     def remove_if_original_word(
         list_of_misspellings: [str], original_word: str
@@ -265,10 +266,12 @@ def main(loglevel=False):
                 print(f"Removed {word} from misspellings of {original_word}")
         return cleaned_array
 
-    # Remove any real words found in the dictionary that ended up getting generated
+    # Remove duplicates and any real words found in the dictionary that ended up getting generated
     for list_of_misspellings in misspellings:
-        remove_duplicates(list_of_misspellings)
-        remove_real_words(list_of_misspellings)
+        deduped = remove_duplicates(list_of_misspellings)
+        without_real_words = remove_real_words(deduped)
+        list_of_misspellings.clear()
+        list_of_misspellings.extend(without_real_words)
 
     # Map original word to misspellings
     misspelling_dict = dict()
