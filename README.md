@@ -87,6 +87,7 @@ Check that espanso is installed
 - [] remove duplicates after generating all mispellings
 - [] generate more advanced misspellings
 - [] remember previously generated words, skip them (or overwrite)
+- [] add option to append to existing yaml file
 
   - [] bump multiple letters around (ex: annoucmemnet, both e's have been swapped to the right)
   - [] bump letters around further (ex: annoucenment, n has been shifted right by 2)
